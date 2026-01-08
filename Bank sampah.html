@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBank | Bank Sampah Digital</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. RESET & VARIABLES --- */
+        :root {
+            --primary: #10b981;       /* Emerald Green */
+            --primary-dark: #059669;
+            --secondary: #1e293b;     /* Slate Dark */
+            --accent: #f59e0b;        /* Amber */
+            --bg-body: #f8fafc;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.85);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --gradient-main: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-body); color: var(--secondary); line-height: 1.7; overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+
+        /* --- 2. COMPONENTS --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-main);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.5);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- 3. NAVBAR --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        
+        .logo { 
+            font-size: 1.5rem; font-weight: 800; color: var(--secondary); display: flex; align-items: center; gap: 8px; 
+        }
+        .logo i { color: var(--primary); font-size: 1.8rem; }
+
+        .nav-links { display: flex; gap: 40px; align-items: center; }
+        .nav-links a { font-weight: 600; color: #475569; position: relative; font-size: 0.95rem; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
+            background: var(--primary); transition: 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        .mobile-toggle { display: none; font-size: 1.5rem; color: var(--secondary); cursor: pointer; }
+
+        /* --- 4. HERO SECTION --- */
+        .hero {
+            padding: 160px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background Blob decoration */
+        .blob {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(52, 211, 153, 0.1) 100%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+        }
+        .blob-1 { width: 500px; height: 500px; top: -100px; right: -100px; }
+        .blob-2 { width: 400px; height: 400px; bottom: 0; left: -100px; background: rgba(245, 158, 11, 0.1); }
+
+        .hero-wrapper { display: flex; align-items: center; gap: 50px; }
+        
+        .hero-text { flex: 1; opacity: 0; transform: translateY(30px); animation: fadeUp 1s forwards; }
+        .hero-text h1 {
+            font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; color: var(--secondary); letter-spacing: -2px;
+        }
+        .hero-text h1 span {
+            background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-text p { font-size: 1.1rem; color: #64748b; margin-bottom: 2rem; }
+
+        .hero-image { flex: 1; position: relative; opacity: 0; transform: translateX(30px); animation: fadeUp 1s 0.3s forwards; }
+        .hero-image img {
+            border-radius: 30px;
+            box-shadow: var(--shadow-lg);
+            border: 8px solid rgba(255,255,255,0.5);
+        }
+        
+        .stats-badge {
+            position: absolute;
+            bottom: 30px; left: -30px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            display: flex; align-items: center; gap: 15px;
+            animation: float 4s ease-in-out infinite;
+        }
+        .stats-icon { width: 50px; height: 50px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; }
+
+        /* --- 5. CALCULATOR (Floating) --- */
+        .calculator-section { margin-top: -60px; position: relative; z-index: 10; margin-bottom: 100px; }
+        .calculator-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .calc-grid { display: grid; grid-template-columns: 2fr 1fr auto; gap: 20px; align-items: center; margin-top: 30px; }
+        
+        select, input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 1rem;
+            outline: none;
+            background: #f8fafc;
+            transition: 0.3s;
+        }
+        select:focus, input:focus { border-color: var(--primary); background: white; }
+
+        .result-box {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            background: #ecfdf5;
+            padding: 15px 30px;
+            border-radius: 15px;
+            min-width: 200px;
+        }
+
+        /* --- 6. STEPS --- */
+        .steps { padding: 80px 0; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        
+        .step-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+        .step-num {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 4rem; font-weight: 800; color: #f1f5f9; z-index: 0;
+            line-height: 1;
+        }
+        .step-icon {
+            font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; position: relative; z-index: 1;
+        }
+        .step-content { position: relative; z-index: 1; }
+        .step-content h3 { font-size: 1.25rem; margin-bottom: 10px; color: var(--secondary); }
+        .step-content p { color: #64748b; font-size: 0.95rem; }
+
+        /* --- 7. PRICES --- */
+        .prices { padding: 80px 0; background: white; }
+        .price-wrapper {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafc; text-align: left; padding: 20px 30px; color: #475569; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        td { padding: 20px 30px; border-bottom: 1px solid #f1f5f9; color: var(--secondary); font-weight: 500; }
+        tr:hover td { background: #f0fdf4; }
+        td i { width: 30px; }
+
+        /* --- 8. FOOTER --- */
+        footer { background: var(--secondary); color: white; padding: 80px 0 30px; margin-top: 80px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; margin-bottom: 50px; }
+        .footer-col h4 { font-size: 1.2rem; margin-bottom: 25px; color: var(--primary); }
+        .footer-col p { color: #94a3b8; margin-bottom: 15px; }
+        .social-links a {
+            display: inline-flex; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%;
+            align-items: center; justify-content: center; margin-right: 10px; transition: 0.3s;
+        }
+        .social-links a:hover { background: var(--primary); transform: scale(1.1); }
+        .copyright { text-align: center; color: #64748b; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
+
+        /* --- 9. MOBILE RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .hero-text h1 { font-size: 3rem; }
+            .hero-wrapper { flex-direction: column-reverse; text-align: center; }
+            .hero-image { transform: translateX(0); }
+            .stats-badge { left: 50%; transform: translateX(-50%); width: max-content; }
+            .section-title { font-size: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle { display: block; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 75%; height: 100vh;
+                background: white; flex-direction: column; justify-content: center;
+                box-shadow: -10px 0 30px rgba(0,0,0,0.1); transition: 0.4s ease;
+            }
+            .nav-links.active { right: 0; }
+            .calc-grid { grid-template-columns: 1fr; }
+            .result-box { width: 100%; text-align: center; }
+            .hero { padding-top: 120px; }
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo"><i class="fas fa-recycle"></i> EcoBank</a>
+            <nav class="nav-links" id="navLinks">
+                <a href="#home" class="active">Beranda</a>
+                <a href="#harga">Harga Sampah</a>
+                <a href="#cara">Cara Kerja</a>
+                <a href="#kontak">Hubungi Kami</a>
+                <a href="#" class="btn btn-primary" style="margin-left: 10px;">Masuk / Daftar</a>
+            </nav>
+            <div class="mobile-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="container hero-wrapper">
+            <div class="hero-text">
+                <h1>Ubah Sampah Jadi <br><span>Saldo Rupiah</span></h1>
+                <p>Platform pengelolaan sampah digital modern. Setor sampah dari rumah, pantau timbangan transparan, dan cairkan saldo ke E-Wallet kapan saja.</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <button onclick="document.getElementById('harga').scrollIntoView()" class="btn btn-primary">Lihat Harga</button>
+                    <button class="btn" style="background: white; color: var(--secondary); border: 2px solid #e2e8f0;">Pelajari Dulu</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Recycling">
+                <div class="stats-badge">
+                    <div class="stats-icon"><i class="fas fa-users"></i></div>
+                    <div>
+                        <h4 style="font-weight: 800; color: var(--secondary); line-height: 1;">1,200+</h4>
+                        <span style="font-size: 0.8rem; color: #64748b;">Nasabah Aktif</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container calculator-section">
+        <div class="calculator-card">
+            <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--secondary);">Simulasi Pendapatan</h2>
+            <p style="color: #64748b;">Cek potensi cuan dari tumpukan sampah di gudangmu.</p>
+            
+            <div class="calc-grid">
+                <select id="sampahType">
+                    <option value="3500">Botol Plastik Bersih (Rp 3.500/kg)</option>
+                    <option value="2000">Kardus / Karton (Rp 2.000/kg)</option>
+                    <option value="14000">Kaleng Aluminium (Rp 14.000/kg)</option>
+                    <option value="75000">Tembaga Kabel (Rp 75.000/kg)</option>
+                    <option value="4500">Besi Tua (Rp 4.500/kg)</option>
+                    <option value="5000">Minyak Jelantah (Rp 5.000/L)</option>
+                </select>
+                <input type="number" id="beratInput" placeholder="Berat (Kg/L)" min="1">
+                <div class="result-box" id="hasilEstimasi">Rp 0</div>
+            </div>
+            <button onclick="hitungEstimasi()" class="btn btn-primary" style="margin-top: 20px; width: 100%;">Hitung Sekarang</button>
+        </div>
+    </section>
+
+    <section class="steps" id="cara">
+        <div class="container">
+            <h2 class="section-title">Semudah 1-2-3-4</h2>
+            <p class="section-subtitle">Proses kami dirancang transparan dan cepat agar Anda nyaman.</p>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <span class="step-num">01</span>
+                    <i class="fas fa-box-open step-icon"></i>
+                    <div class="step-content">
+                        <h3>Pilah Sampah</h3>
+                        <p>Pisahkan sampah organik dan anorganik. Pastikan sampah anorganik dalam keadaan kering.</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">02</span>
+                    <i class="fas fa-truck-loading step-icon"></i>
+                    <div class="step-content">
+                        <h3>Setor / Jemput</h3>
+                        <p>Bawa ke bank sampah terdekat atau request penjemputan gratis via aplikasi (min 10kg).</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">03</span>
+                    <i class="fas fa-balance-scale step-icon"></i>
+                    <div class="step-content">
+                        <h3>Timbang Digital</h3>
+                        <p>Penimbangan dilakukan dengan timbangan digital akurat dan tercatat real-time.</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">04</span>
+                    <i class="fas fa-wallet step-icon"></i>
+                    <div class="step-content">
+                        <h3>Terima Saldo</h3>
+                        <p>Saldo langsung masuk ke akun. Tarik tunai, pulsa, atau transfer bank kapan saja.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="prices" id="harga">
+        <div class="container">
+            <h2 class="section-title">Harga Sampah Hari Ini</h2>
+            <div class="price-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jenis Sampah</th>
+                            <th>Kategori</th>
+                            <th>Harga / Unit</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="fas fa-wine-bottle" style="color:#10b981; margin-right: 10px;"></i> Botol Plastik (PET)</td>
+                            <td><span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;">PLASTIK</span></td>
+                            <td>Rp 3.500 /kg</td>
+                            <td><i class="fas fa-arrow-up" style="color: var(--primary);"></i></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-box" style="color:#f59e0b; margin-right: 10px;"></i> Kardus Bekas</td>
+                            <td><span style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;">KERTAS</span></td>
+                            <td>Rp 2.000 /kg</td>
+                            <td><i class="fas fa-minus" style="color: #94a3b8;"></i></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-cog" style="color:#64748b; margin-right: 10px;"></i> Aluminium / Kaleng</td>
+                            <td><span style="background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;">LOGAM</span></td>
+                            <td>Rp 14.000 /kg</td>
+                            <td><i class="fas fa-arrow-up" style="color: var(--primary);"></i></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-oil-can" style="color:#eab308; margin-right: 10px;"></i> Minyak Jelantah</td>
+                            <td><span style="background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;">CAIRAN</span></td>
+                            <td>Rp 5.000 /liter</td>
+                            <td><i class="fas fa-arrow-up" style="color: var(--primary);"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer id="kontak">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo" style="color: white; margin-bottom: 20px;"><i class="fas fa-recycle" style="color: var(--primary);"></i> EcoBank</div>
+                    <p>Membangun ekosistem daur ulang yang modern, transparan, dan menguntungkan bagi seluruh lapisan masyarakat.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Kontak Kami</h4>
+                    <p><i class="fas fa-map-marker-alt" style="margin-right: 10px; color: var(--primary);"></i> Jakarta Selatan, Indonesia</p>
+                    <p><i class="fas fa-phone" style="margin-right: 10px; color: var(--primary);"></i> 0812-3456-7890</p>
+                    <p><i class="fas fa-envelope" style="margin-right: 10px; color: var(--primary);"></i> help@ecobank.id</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Ikuti Kami</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 EcoBank Digital. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle Menu Mobile
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            nav.classList.toggle('active');
+        }
+
+        // Kalkulator Logic
+        function hitungEstimasi() {
+            const harga = document.getElementById('sampahType').value;
+            const berat = document.getElementById('beratInput').value;
+            const display = document.getElementById('hasilEstimasi');
+
+            if(berat > 0) {
+                const total = harga * berat;
+                const formatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(total);
+                
+                // Efek hitung
+                display.style.transform = "scale(1.1)";
+                display.innerText = "Menghitung...";
+                
+                setTimeout(() => {
+                    display.innerText = formatted;
+                    display.style.transform = "scale(1)";
+                }, 300);
+            } else {
+                display.innerText = "Rp 0";
+                alert("Mohon masukkan berat minimal 1 Kg/L");
+            }
+        
+
+        // Navbar effect on scroll
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if(window.scrollY > 50) {
+                header.style.boxShadow = "0 4px 20px rgba(0,0,0,0.05)";
+                header.style.background = "rgba(255, 255, 255, 0.95)";
+            } else {
+                header.style.boxShadow = "none";
+                header.style.background = "rgba(255, 255, 255, 0.8)";
+            }
+        });
+    </script>
+</body>
+</html>
